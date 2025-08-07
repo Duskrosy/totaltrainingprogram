@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Quiz</title>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet"/>
+  <style>
+    body {
+      font-family: 'Poppins', sans-serif;
+      background: #ffffff;
+      margin: 0;
+      padding: 2rem;
+      color: #000a60;
+    }
+    .container {
+      max-width: 700px;
+      margin: auto;
+      background: #f8f9fa;
+      padding: 2rem;
+      border-radius: 16px;
+      box-shadow: 0 0 20px rgba(0,0,0,0.05);
+    }
+    .header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 1rem;
+    }
+    .header img {
+      height: 48px;
+    }
+    h1 {
+      font-weight: 700;
+      margin-bottom: 1.5rem;
+      font-size: 1.5rem;
+    }
+    .question {
+      margin-bottom: 2rem;
+    }
+    .question p {
+      font-weight: 600;
+      margin-bottom: 0.5rem;
+    }
+    textarea {
+      width: 100%;
+      min-height: 100px;
+      padding: 0.75rem;
+      font-family: 'Poppins', sans-serif;
+      font-size: 1rem;
+      border-radius: 8px;
+      border: 1px solid #ccc;
+    }
+    button {
+      background: #000a60;
+      color: white;
+      padding: 0.75rem 1.5rem;
+      font-size: 1rem;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      font-weight: 600;
+    }
+    .success {
+      margin-top: 2rem;
+      color: green;
+      font-weight: 600;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="header">
+      <h1 id="quizTitle">Quiz</h1>
+      <img src="images/logo.png" alt="Logo">
+    </div>
+
+    <form id="quizForm"></form>
+
+    <div class="success" id="confirmationMessage" style="display: none;">
+      ✅ Quiz submitted successfully. You may now return to the dashboard.
+    </div>
+  </div>
+
+  <script type="module">
+    import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm';
+
+    const supabase = createClient(
+      'https://zmkplthkfmonboskofuf.supabase.co',
+      'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Inpta3BsdGhrZm1vbmJvc2tvZnVmIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTM5NzMxOTQsImV4cCI6MjA2OTU0OTE5NH0.4n1Ey14s5z-GMgOeSniXefiaQ3UuvzSP5gV7WYEUnGA'
+    );
+
+    const email = localStorage.getItem('userEmail');
+    const params = new URLSearchParams(window.location.search);
+    const week = params.get('week') || 'Week Unknown';
+
+    const questionsByWeek = {
+      "Week 1": [
+        "What did you learn this week?",
+        "How will you use this knowledge?",
+        "Any confusion or questions?"
+      ],
+      "Week 2": [
+        "Explain aerobic capacity.",
+        "Share a cardio routine you enjoy.",
+        "Do you have dietary questions?"
+      ],
+      "Day 1": [
+        "Describe what a balanced meal looks like for you.",
+        "How will you start implementing it?",
+        "What's one thing that surprised you?"
+      ]
+    };
+
+    const quizTitle = document.getElementById('quizTitle');
+    const form = document.getElementById('quizForm');
+    const confirmation = document.getElementById('confirmationMessage');
+
+    const cleanWeek = week.replace(" Quiz", "").trim();
+    quizTitle.textContent = `${week} Quiz`;
+
+    const questions = questionsByWeek[cleanWeek] || [
+      "In your own words, explain the main concept of today's lesson.",
+      "How would you apply this knowledge in your daily life?",
+      "Do you have any questions or feedback about this topic?"
+    ];
+
+    questions.forEach((q, i) => {
+      const div = document.createElement('div');
+      div.className = 'question';
+      div.innerHTML = `
+        <p>${q}</p>
+        <textarea name="q${i + 1}" required></textarea>
+      `;
+      form.appendChild(div);
+    });
+
+    const submitBtn = document.createElement('button');
+    submitBtn.textContent = 'Submit Quiz';
+    submitBtn.type = 'submit';
+    form.appendChild(submitBtn);
+
+    form.addEventListener('submit', async (e) => {
+      e.preventDefault();
+
+      await supabase.from('progress').insert([{ email, week_name: `${week} Quiz` }]);
+
+      confirmation.style.display = 'block';
+      form.style.display = 'none';
+
+      fetch('https://your-crm-webhook.com/hook', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email, quiz: week, status: 'completed' })
+      });
+    });
+  </script>
+</body>
+</html>
