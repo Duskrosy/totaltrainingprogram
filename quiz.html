@@ -79,50 +79,51 @@
       'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Inpta3BsdGhrZm1vbmJvc2tvZnVmIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTM5NzMxOTQsImV4cCI6MjA2OTU0OTE5NH0.4n1Ey14s5z-GMgOeSniXefiaQ3UuvzSP5gV7WYEUnGA'
     );
 
+    const email = localStorage.getItem("userEmail");
     const urlParams = new URLSearchParams(window.location.search);
-    const lessonName = urlParams.get("lesson");
-    document.getElementById("quizTitle").textContent = lessonName || "Quiz";
+    const weekName = urlParams.get("week");
+    document.getElementById("quizTitle").textContent = weekName || "Quiz";
 
-    const quizData = {
-      "Day 1 Quiz": [
+    const questionsByWeek = {
+      "Day 1 - Start of Total Training Program": [
         "What did you learn about balanced eating?",
         "What’s one thing you'll improve in your diet?"
       ],
-      "Week 1 Quiz": [
+      "Week 1 - Foundations": [
         "What are two key takeaways you learned this week?",
         "How will you apply what you learned into your lifestyle?"
       ],
-      "Week 2 Quiz": [
+      "Week 2 - Performance Fuel": [
         "Describe your current aerobic routine or goal.",
         "How do you plan to improve your energy through carbs?"
       ],
-      "Week 3 Quiz": [
+      "Week 3 - Power Building": [
         "What did you learn about muscle growth?",
         "What protein sources do you plan to use this week?"
       ],
-      "Week 4 Quiz": [
+      "Week 4 - Core Training": [
         "How do you plan to manage fat intake?",
         "What principles of training are most important to you?"
       ],
-      "Week 5 Quiz": [
+      "Week 5 - Smart Eating": [
         "What stood out about ab workouts and hydration?",
         "Describe your approach to understanding diet labels now."
       ],
-      "Week 6 Quiz": [
+      "Week 6 - Deeper Health": [
         "What causes plateaus in fitness?",
         "Which whole grain meals will you try adding?"
       ],
-      "Week 7 Quiz": [
+      "Week 7 - Balance & Recovery": [
         "How do micronutrients impact your health?",
         "How will you improve sleep or manage stress?"
       ],
-      "Week 8 Quiz": [
+      "Week 8 - Capstone": [
         "Summarize your biggest transformation from this program.",
         "What are your next steps after finishing this journey?"
       ]
     };
 
-    const questions = quizData[lessonName];
+    const questions = questionsByWeek[weekName];
     const form = document.getElementById("quizForm");
     const statusDiv = document.getElementById("status");
 
@@ -156,16 +157,16 @@
 
       const { error } = await supabase.from("quiz_responses").insert([
         {
-          email: localStorage.getItem("userEmail"),
-          lesson: lessonName,
-          answers: answers,
+          email,
+          lesson: weekName,
+          answers,
           submitted_at: new Date().toISOString()
         }
       ]);
 
       if (error) {
         console.error("Supabase error:", error.message);
-        statusDiv.textContent = "There was a problem submitting your quiz.";
+        statusDiv.textContent = "❌ There was a problem submitting your quiz.";
         statusDiv.style.color = "red";
       } else {
         statusDiv.textContent = "✅ Your answers have been submitted!";
