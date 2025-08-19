@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Total Training Dashboard</title>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;800&display=swap" rel="stylesheet">
+  <style>
+    * {
+      box-sizing: border-box;
+    }
+    body {
+      font-family: 'Poppins', sans-serif;
+      margin: 0;
+      padding: 1rem;
+      background: #f5f7fa;
+      color: #000a60;
+    }
+    header {
+      text-align: center;
+      margin-bottom: 1rem;
+    }
+    header img {
+      height: 60px;
+      margin-bottom: 0.5rem;
+    }
+    h1 {
+      font-size: 1.8rem;
+      font-weight: 800;
+      margin: 0.5rem 0;
+    }
+    .progress-bar {
+      background: #ddd;
+      height: 12px;
+      border-radius: 6px;
+      overflow: hidden;
+      margin: 1rem auto;
+      width: 90%;
+      max-width: 400px;
+    }
+    .progress-fill {
+      background: #000a60;
+      height: 100%;
+      width: 0%;
+      transition: width 0.4s ease;
+    }
+
+    .week {
+      background: white;
+      border-radius: 14px;
+      margin-bottom: 1rem;
+      padding: 0.5rem 1rem;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+      transition: all 0.3s ease;
+    }
+    .week h2 {
+      margin: 0;
+      font-size: 1.1rem;
+      font-weight: 600;
+      cursor: pointer;
+      padding: 1rem 0;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .week h2::after {
+      content: "▼";
+      font-size: 1rem;
+      transition: transform 0.3s ease;
+    }
+
+    .week.expanded h2::after {
+      transform: rotate(180deg);
+    }
+
+    .lesson-list {
+      max-height: 0;
+      overflow: hidden;
+      transition: max-height 0.5s ease;
+    }
+
+    .lesson-list.active {
+      max-height: 500px;
+    }
+
+    .lesson {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin: 0.5rem 0;
+    }
+
+    .lesson button {
+      background: #000a60;
+      color: white;
+      border: none;
+      padding: 0.4rem 0.8rem;
+      border-radius: 6px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: background 0.3s ease;
+    }
+
+    .lesson button:hover {
+      background: #003399;
+    }
+
+    @media screen and (max-width: 500px) {
+      .lesson {
+        flex-direction: column;
+        align-items: flex-start;
+      }
+
+      .lesson button {
+        margin-top: 0.5rem;
+        width: 100%;
+      }
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <img src="images/logo.png" alt="Total Fitness Logo">
+    <h1>Total Training Program</h1>
+    <div class="progress-bar"><div class="progress-fill" id="progressFill"></div></div>
+  </header>
+
+  <div id="weeksContainer"></div>
+
+  <script type="module">
+    import { contentMap } from './content.js';
+
+    const structure = [
+      { title: "Day 1 - Start of Total Training Program", lessons: ["day1-lesson1"], quiz: "day1-quiz" },
+      { title: "Week 1 - Foundations", lessons: ["week1-lesson1", "week1-lesson2"], quiz: "week1-quiz" },
+      { title: "Week 2 - Performance Fuel", lessons: ["week2-lesson1", "week2-lesson2"], quiz: "week2-quiz" },
+      { title: "Week 3 - Power Building", lessons: ["week3-lesson1", "week3-lesson2"], quiz: "week3-quiz" },
+      { title: "Week 4 - Core Training", lessons: ["week4-lesson1", "week4-lesson2"], quiz: "week4-quiz" },
+      { title: "Week 5 - Smart Eating", lessons: ["week5-lesson1", "week5-lesson2"], quiz: "week5-quiz" },
+      { title: "Week 6 - Deeper Health", lessons: ["week6-lesson1", "week6-lesson2"], quiz: "week6-quiz" },
+      { title: "Week 7 - Balance & Recovery", lessons: ["week7-lesson1", "week7-lesson2"], quiz: "week7-quiz" },
+      { title: "Week 8 - Capstone", lessons: ["week8-lesson1", "week8-lesson2"], quiz: "week8-quiz" }
+    ];
+
+    const container = document.getElementById('weeksContainer');
+    let totalItems = 0;
+    let completed = 0;
+
+    structure.forEach((week, i) => {
+      const weekDiv = document.createElement('div');
+      weekDiv.className = 'week';
+
+      const h2 = document.createElement('h2');
+      h2.textContent = week.title;
+
+      h2.addEventListener('click', () => {
+        const wasOpen = weekDiv.classList.contains('expanded');
+        document.querySelectorAll('.week').forEach(w => {
+          w.classList.remove('expanded');
+          w.querySelector('.lesson-list').classList.remove('active');
+        });
+        if (!wasOpen) {
+          weekDiv.classList.add('expanded');
+          list.classList.add('active');
+        }
+      });
+
+      const list = document.createElement('div');
+      list.className = 'lesson-list';
+
+      week.lessons.forEach(slug => {
+        totalItems++;
+        const lessonDiv = document.createElement('div');
+        lessonDiv.className = 'lesson';
+        lessonDiv.innerHTML = `
+          <span>${contentMap[slug]?.title || slug}</span>
+          <button onclick="location.href='view.html?lesson=${slug}'">View Course</button>
+        `;
+        list.appendChild(lessonDiv);
+      });
+
+      if (week.quiz) {
+        totalItems++;
+        const quizDiv = document.createElement('div');
+        quizDiv.className = 'lesson';
+        quizDiv.innerHTML = `
+          <span>${week.quiz.replace(/-/g, ' ').toUpperCase()}</span>
+          <button onclick="location.href='quiz.html?quiz=${week.quiz}'">Take Quiz</button>
+        `;
+        list.appendChild(quizDiv);
+      }
+
+      weekDiv.appendChild(h2);
+      weekDiv.appendChild(list);
+      container.appendChild(weekDiv);
+    });
+
+    // Placeholder progress logic
+    document.getElementById('progressFill').style.width = `${(completed / totalItems) * 100}%`;
+  </script>
+</body>
+</html>
