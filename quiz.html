@@ -11,8 +11,9 @@
       background: linear-gradient(to right, #f9f9f9, #f2f4ff);
       color: #000a60;
       margin: 0;
-      padding: 2rem;
+      padding: 1rem;
     }
+
     .container {
       max-width: 900px;
       margin: auto;
@@ -22,18 +23,21 @@
       box-shadow: 0 8px 24px rgba(0, 0, 0, 0.1);
       position: relative;
     }
+
     h1 {
       font-weight: 700;
-      margin-bottom: 1rem;
+      margin-bottom: 1.5rem;
       text-align: center;
       font-size: 2rem;
     }
+
     label {
       display: block;
       margin-top: 1.5rem;
       font-weight: 600;
       font-size: 1.1rem;
     }
+
     textarea {
       width: 100%;
       padding: 0.75rem;
@@ -42,7 +46,9 @@
       border-radius: 10px;
       font-family: 'Poppins', sans-serif;
       font-size: 1rem;
+      resize: vertical;
     }
+
     button {
       margin-top: 2rem;
       padding: 0.75rem 2rem;
@@ -56,9 +62,11 @@
       box-shadow: 0 4px 12px rgba(0,0,0,0.2);
       transition: transform 0.2s;
     }
+
     button:hover {
       transform: scale(1.05);
     }
+
     .status {
       margin-top: 2rem;
       font-weight: 600;
@@ -66,6 +74,7 @@
       font-size: 1.1rem;
       text-align: center;
     }
+
     .back-btn {
       position: absolute;
       top: 20px;
@@ -74,9 +83,11 @@
       border: none;
       cursor: pointer;
     }
+
     .back-btn img {
       height: 32px;
     }
+
     .overlay {
       position: fixed;
       top: 0;
@@ -94,28 +105,60 @@
       color: white;
       animation: fadeIn 0.5s ease-in-out;
     }
+
     .overlay h2 {
-      font-size: 3rem;
+      font-size: 2.8rem;
       font-weight: 700;
       margin-bottom: 1rem;
     }
+
     .overlay p {
       font-size: 1.2rem;
       font-weight: 400;
     }
+
     @keyframes fadeIn {
       from { opacity: 0 }
       to { opacity: 1 }
     }
+
     .confetti {
       position: absolute;
       top: -10px;
       font-size: 24px;
       animation: fall linear forwards;
     }
+
     @keyframes fall {
       0% { transform: translateY(0); opacity: 1; }
       100% { transform: translateY(100vh); opacity: 0; }
+    }
+
+    @media (max-width: 600px) {
+      body {
+        padding: 1rem;
+      }
+
+      h1 {
+        font-size: 1.5rem;
+      }
+
+      label {
+        font-size: 1rem;
+      }
+
+      textarea {
+        font-size: 0.95rem;
+      }
+
+      .overlay h2 {
+        font-size: 2rem;
+      }
+
+      .overlay p {
+        font-size: 1rem;
+        padding: 0 1.5rem;
+      }
     }
   </style>
 </head>

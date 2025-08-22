@@ -30,10 +30,13 @@
       padding: 2rem;
       border-radius: 20px;
       box-shadow: 0 15px 30px rgba(0, 0, 0, 0.3);
+      width: 100%;
       max-width: 400px;
-      width: 90%;
       text-align: center;
       position: relative;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
     }
 
     .logo {
@@ -43,45 +46,13 @@
 
     h1 {
       font-size: 1.6rem;
-      margin-bottom: 1.5rem;
-      font-weight: 700;
-    }
-
-    input[type="email"] {
-      padding: 0.75rem;
-      width: 100%;
-      font-size: 1rem;
-      border-radius: 10px;
-      border: 2px solid var(--primary);
       margin-bottom: 1rem;
-      font-family: 'Poppins', sans-serif;
-    }
-
-    button {
-      background-color: var(--accent);
-      color: var(--white);
-      border: none;
-      padding: 0.75rem 2rem;
-      border-radius: 8px;
-      font-size: 1rem;
-      font-weight: 600;
-      cursor: pointer;
-      transition: all 0.3s ease;
-    }
-
-    button:hover {
-      background-color: #cc0000;
-    }
-
-    #msg {
-      margin-top: 1rem;
-      font-weight: 500;
-      font-size: 0.9rem;
+      font-weight: 700;
     }
 
     .loader {
       display: none;
-      margin-top: 1rem;
+      margin: 1rem 0;
     }
 
     .loader span {
@@ -107,18 +78,71 @@
         transform: translateY(-8px);
       }
     }
+
+    input[type="email"] {
+      padding: 0.75rem;
+      width: 100%;
+      font-size: 1rem;
+      border-radius: 10px;
+      border: 2px solid var(--primary);
+      margin-bottom: 0.5rem;
+      font-family: 'Poppins', sans-serif;
+    }
+
+    .remember-container {
+      width: 100%;
+      display: flex;
+      align-items: center;
+      justify-content: flex-start;
+      margin-bottom: 1rem;
+      font-size: 0.9rem;
+    }
+
+    .remember-container input {
+      margin-right: 8px;
+    }
+
+    button {
+      background-color: var(--accent);
+      color: var(--white);
+      border: none;
+      padding: 0.75rem 2rem;
+      border-radius: 8px;
+      font-size: 1rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.3s ease;
+    }
+
+    button:hover {
+      background-color: #cc0000;
+    }
+
+    #msg {
+      margin-top: 1rem;
+      font-weight: 500;
+      font-size: 0.9rem;
+    }
   </style>
 </head>
 <body>
   <div class="login-box">
     <img src="images/logo.png" alt="Total Fitness Logo" class="logo">
-    <h1>Join Our Total Training Program</h1>
-    <input type="email" id="email" placeholder="you@example.com" />
-    <button onclick="checkLogin()">Continue</button>
-    <div id="msg"></div>
+    <h1>Welcome to the Total Training Program</h1>
+
     <div class="loader" id="loader">
       <span></span><span></span><span></span>
     </div>
+
+    <input type="email" id="email" placeholder="you@example.com" />
+    
+    <div class="remember-container">
+      <input type="checkbox" id="rememberMe">
+      <label for="rememberMe">Remember Me</label>
+    </div>
+
+    <button onclick="checkLogin()">Continue</button>
+    <div id="msg"></div>
   </div>
 
   <script type="module">
@@ -129,12 +153,24 @@
       'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Inpta3BsdGhrZm1vbmJvc2tvZnVmIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTM5NzMxOTQsImV4cCI6MjA2OTU0OTE5NH0.4n1Ey14s5z-GMgOeSniXefiaQ3UuvzSP5gV7WYEUnGA'
     );
 
-    window.checkLogin = async function () {
-      const email = document.getElementById('email').value.trim();
-      const msg = document.getElementById('msg');
-      const loader = document.getElementById('loader');
+    const emailInput = document.getElementById('email');
+    const rememberCheckbox = document.getElementById('rememberMe');
+    const msg = document.getElementById('msg');
+    const loader = document.getElementById('loader');
 
+    // Load saved email on page load
+    window.onload = () => {
+      const savedEmail = localStorage.getItem('rememberedEmail');
+      if (savedEmail) {
+        emailInput.value = savedEmail;
+        rememberCheckbox.checked = true;
+      }
+    };
+
+    window.checkLogin = async function () {
+      const email = emailInput.value.trim();
       msg.textContent = "";
+      msg.style.color = 'inherit';
 
       if (!email) {
         msg.textContent = "Please enter a valid email.";
@@ -142,10 +178,10 @@
         return;
       }
 
-      msg.textContent = "";
       loader.style.display = "flex";
+      msg.textContent = "";
 
-      const delay = Math.floor(Math.random() * 1000) + 1000; // 1–2 seconds random
+      const delay = Math.floor(Math.random() * 1000) + 1000;
 
       const { data, error } = await supabase
         .from('user')
@@ -161,8 +197,18 @@
         } else {
           msg.textContent = "Logging you in...";
           msg.style.color = 'green';
-          localStorage.setItem('userEmail', email);
-          window.location.href = "dashboard.html";
+
+          // Save to localStorage if checked
+          if (rememberCheckbox.checked) {
+            localStorage.setItem('rememberedEmail', email);
+          } else {
+            localStorage.removeItem('rememberedEmail');
+          }
+
+          setTimeout(() => {
+            localStorage.setItem('userEmail', email);
+            window.location.href = "dashboard.html";
+          }, 800);
         }
       }, delay);
     };
