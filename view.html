@@ -24,33 +24,32 @@
     }
     .container {
       display: flex;
-      flex-direction: column;
-      gap: 1rem;
-      max-width: 1000px;
+      flex-direction: row;
+      max-width: 1200px;
       margin: auto;
+      gap: 2rem;
     }
     .main-content {
+      flex: 3;
       background: white;
-      padding: 1.5rem;
+      padding: 2rem;
       border-radius: 16px;
-      box-shadow: 0 4px 8px rgba(0,0,0,0.05);
+      box-shadow: 0 0 10px rgba(0,0,0,0.05);
     }
     .sidebar {
+      flex: 1;
       display: flex;
-      flex-direction: row;
+      flex-direction: column;
       gap: 1rem;
-      justify-content: center;
-      flex-wrap: wrap;
     }
     .format-btn {
-      padding: 0.75rem 1.25rem;
+      padding: 1rem;
       background: #000a60;
       color: white;
       border: none;
       border-radius: 10px;
       cursor: pointer;
       font-weight: 600;
-      transition: background 0.2s;
     }
     .format-btn:hover {
       background: #002288;
@@ -95,6 +94,19 @@
       font-weight: 700;
       margin-bottom: 1rem;
     }
+    .back-btn {
+      display: inline-flex;
+      align-items: center;
+      font-weight: 600;
+      font-size: 0.9rem;
+      color: #000a60;
+      text-decoration: none;
+      margin-bottom: 1rem;
+    }
+    .back-btn img {
+      width: 20px;
+      margin-right: 8px;
+    }
   </style>
 </head>
 <body>
@@ -105,20 +117,21 @@
     <button onclick="setFormat('document')">📄 Document</button>
   </div>
 
-  <div class="header container">
+  <div class="header container" style="align-items: center;">
+    <a href="dashboard.html" class="back-btn"><img src="images/backbutton.svg" alt="Back" />Back to Dashboard</a>
     <h1 id="lessonTitle">Lesson</h1>
     <img src="images/logo.png" alt="Logo" />
   </div>
 
   <div class="container">
     <div class="main-content" id="contentArea">
-      <div id="viewer">Loading...</div>
+      <div id="viewer"></div>
     </div>
     <div class="sidebar">
-      <button class="format-btn" onclick="switchFormat('video')">🎥 Video</button>
-      <button class="format-btn" onclick="switchFormat('audio')">🎧 Audio</button>
-      <button class="format-btn" onclick="switchFormat('document')">📄 Document</button>
-      <button class="format-btn" onclick="changePreference()">🛠 Change Format</button>
+      <button class="format-btn" onclick="switchFormat('video')">🎥 Switch to Video</button>
+      <button class="format-btn" onclick="switchFormat('audio')">🎧 Switch to Audio</button>
+      <button class="format-btn" onclick="switchFormat('document')">📄 Switch to Document</button>
+      <button class="format-btn" onclick="changePreference()">🛠 Change Preferred Format</button>
     </div>
   </div>
 
@@ -126,20 +139,18 @@
     import { contentMap } from './content.js';
 
     const email = localStorage.getItem('userEmail');
-    if (!email) window.location.href = 'index.html';
-
-    const params = new URLSearchParams(window.location.search);
-    const lessonKey = params.get("lesson");
-
-    if (!lessonKey || !contentMap[lessonKey]) {
-      document.getElementById("viewer").innerHTML = "<p><strong>Invalid lesson.</strong></p>";
-      throw new Error("Lesson not found");
+    if (!email) {
+      window.location.href = 'index.html';
     }
 
-    const lessonTitle = contentMap[lessonKey].title || lessonKey;
+    const params = new URLSearchParams(window.location.search);
+    const lesson = params.get("lesson") || "unknown";
+    const lessonData = contentMap[lesson];
+    const lessonTitle = lessonData?.title || lesson;
+
     document.getElementById("lessonTitle").textContent = lessonTitle;
 
-    const prefKey = `lesson_pref_${lessonKey}`;
+    const prefKey = `lesson_pref_${lesson}`;
     let currentFormat = localStorage.getItem(prefKey);
 
     if (!currentFormat) {
@@ -148,29 +159,44 @@
       loadFormat(currentFormat);
     }
 
-    window.setFormat = function (format) {
-      localStorage.setItem(prefKey, format);
-      document.getElementById("formatSelector").style.display = "none";
-      loadFormat(format);
-    };
+window.setFormat = function(format) {
+  localStorage.setItem(prefKey, format);
+  document.getElementById("formatSelector").style.display = "none";
+  loadFormat(format);
+};
 
-    window.switchFormat = function (format) {
-      loadFormat(format);
-    };
+window.switchFormat = function(format) {
+  loadFormat(format);
+};
 
-    window.changePreference = function () {
+window.changePreference = function() {
+  document.getElementById("formatSelector").style.display = "flex";
+};
+
+window.markDocumentComplete = function() {
+  console.log("Document download tracked.");
+};
+
+
+    function switchFormat(format) {
+      loadFormat(format);
+    }
+
+    function changePreference() {
       document.getElementById("formatSelector").style.display = "flex";
-    };
+    }
 
     function loadFormat(format) {
+      currentFormat = format;
       const viewer = document.getElementById("viewer");
-      const lessonContent = contentMap[lessonKey];
-      const source = lessonContent[format];
+      viewer.innerHTML = "";
 
-      if (!source) {
+      if (!lessonData || !lessonData[format]) {
         viewer.innerHTML = `<p><strong>No ${format} available for this lesson.</strong></p>`;
         return;
       }
+
+      const source = lessonData[format];
 
       if (format === "video") {
         viewer.innerHTML = `<iframe src="${source}" frameborder="0" allowfullscreen></iframe>`;
@@ -178,16 +204,16 @@
         viewer.innerHTML = `<audio controls src="${source}"></audio>`;
       } else if (format === "document") {
         viewer.innerHTML = `
-          <div class="pdf-box">
-            <iframe src="${source}"></iframe>
-            <button onclick="markDocumentComplete()">📄 Download PDF</button>
-          </div>
+<div class="pdf-box">
+  <iframe src="https://docs.google.com/gview?url=${encodeURIComponent(source)}&embedded=true" frameborder="0"></iframe>
+  <button onclick="window.open('${source}', '_blank')">📥 Download File</button>
+</div>
         `;
       }
     }
 
     function markDocumentComplete() {
-      console.log("Document downloaded");
+      console.log("Document download tracked.");
     }
   </script>
 </body>
