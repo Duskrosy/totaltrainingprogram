@@ -21,13 +21,13 @@ export const contentMap = {
     title: "Aerobic Exercise",
     video: "https://dl.dropboxusercontent.com/scl/fi/38itgscz63g41lhra3kbt/Week-2-Aerobic-Exercise.mp4?rlkey=uuzjypechormngc30j8h3q5ld&st=i25bxvuh",
     audio: "https://example.com/audio3",
-    document: "https://www.dropbox.com/scl/fi/0owg1uhgva9m41lazp9rx/Week-2-Aerobic-Exercise.pdf?rlkey=wqfo5ah0g0ove2vm10od64sih&st=6fu7jqju&dl=0"
+    document: "https://dl.dropboxusercontent.com/scl/fi/0owg1uhgva9m41lazp9rx/Week-2-Aerobic-Exercise.pdf?rlkey=wqfo5ah0g0ove2vm10od64sih&st=xzbn6e9w"
   },
   "week2-lesson2": {
     title: "Carbohydrates",
     video: "https://example.com/video4",
     audio: "https://example.com/audio4",
-    document: "https://www.dropbox.com/scl/fi/p5sk2ihtez08ie5dkmciu/Week-2-Carbohydrates.pdf?rlkey=d4odmnrquvz1ecidthpw2z9nu&st=p77hrlkh&dl=0"
+    document: "https://dl.dropboxusercontent.com/scl/fi/p5sk2ihtez08ie5dkmciu/Week-2-Carbohydrates.pdf?rlkey=d4odmnrquvz1ecidthpw2z9nu&st=l9s4ylsr"
   },
   // ...continue adding more weeks/lessons
 };
