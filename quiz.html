@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Quiz</title>
+  <title>Lesson Quiz</title>
   <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet"/>
   <style>
     body {
@@ -27,25 +27,31 @@
     }
     label {
       display: block;
-      margin: 1rem 0 0.5rem;
+      margin-top: 1rem;
       font-weight: 600;
     }
-    textarea, input {
+    textarea, input[type="text"] {
       width: 100%;
-      padding: 1rem;
+      padding: 0.75rem;
+      margin-top: 0.5rem;
       border: 1px solid #ccc;
       border-radius: 8px;
-      margin-bottom: 1rem;
       font-family: 'Poppins', sans-serif;
     }
     button {
+      margin-top: 2rem;
+      padding: 0.75rem 2rem;
       background: #000a60;
       color: white;
       border: none;
-      padding: 0.75rem 2rem;
       border-radius: 8px;
       cursor: pointer;
       font-weight: 600;
+    }
+    .status {
+      margin-top: 1rem;
+      font-weight: 600;
+      color: green;
     }
   </style>
 </head>
@@ -53,104 +59,118 @@
   <div class="container">
     <h1 id="quizTitle">Quiz</h1>
     <form id="quizForm"></form>
-    <button onclick="submitQuiz()">Submit</button>
+    <button onclick="submitQuiz()">Submit Quiz</button>
+    <div class="status" id="statusMessage"></div>
   </div>
 
   <script>
+    const email = localStorage.getItem("userEmail");
+    if (!email) {
+      window.location.href = "index.html";
+    }
+
     const quizData = {
       "day1-quiz": [
-        "Why is it important to eat often throughout the day?",
-        "Why is breakfast important?",
-        "How do you setup your plate for weight loss?",
-        "What do you need to work on the most so far as nutrition?"
+        { type: "long", question: "Why is it important to eat often throughout the day?" },
+        { type: "short", question: "When should you eat breakfast?" },
+        { type: "long", question: "How do you setup your plate for weight loss?" },
+        { type: "short", question: "What is one thing you will change starting today?" }
       ],
       "week1-quiz": [
-        "What is one key benefit of regular exercise?",
-        "How does nutrition help your fitness?",
-        "Name one way to track progress effectively.",
-        "What is your biggest challenge this week?"
+        { type: "short", question: "What is one benefit of regular exercise?" },
+        { type: "long", question: "Describe how nutrition supports your workout goals." },
+        { type: "short", question: "How many times should you train weekly?" },
+        { type: "long", question: "What is the biggest challenge you face in exercising?" }
       ],
       "week2-quiz": [
-        "What is aerobic exercise?",
-        "Name a carbohydrate-rich food you enjoy.",
-        "How do carbs affect your energy levels?",
-        "What’s one habit you can improve this week?"
+        { type: "short", question: "What are carbohydrates used for?" },
+        { type: "long", question: "Explain how aerobic exercise benefits your health." },
+        { type: "short", question: "Name one complex carb you eat regularly." },
+        { type: "long", question: "How can you improve your cardio endurance?" }
       ],
       "week3-quiz": [
-        "What is metabolism?",
-        "How does protein help with muscle growth?",
-        "Name a high-protein food you like.",
-        "What would you change about your current diet?"
+        { type: "short", question: "What is muscle metabolism?" },
+        { type: "long", question: "Why is protein important for recovery?" },
+        { type: "short", question: "Name a high-protein food." },
+        { type: "long", question: "How will you adjust your protein intake?" }
       ],
       "week4-quiz": [
-        "What are healthy fats?",
-        "How often should you train your core?",
-        "What’s one new principle of training you learned?",
-        "Describe your current weekly workout routine."
+        { type: "short", question: "What are healthy fats?" },
+        { type: "long", question: "Explain the principle of progressive overload." },
+        { type: "short", question: "What is one core exercise you enjoy?" },
+        { type: "long", question: "Describe your training split for this week." }
       ],
       "week5-quiz": [
-        "Why is water important during workouts?",
-        "What’s a myth about ab workouts?",
-        "Describe a diet you’ve tried before.",
-        "What would an ideal meal look like for you?"
+        { type: "short", question: "Why is hydration important?" },
+        { type: "long", question: "Explain how ab training fits into your routine." },
+        { type: "short", question: "What type of diet do you follow?" },
+        { type: "long", question: "What changes can improve your diet?" }
       ],
       "week6-quiz": [
-        "What causes a fitness plateau?",
-        "What’s the difference between fiber types?",
-        "How can whole grains support your health?",
-        "What’s your next step if you hit a plateau?"
+        { type: "short", question: "What is a plateau in fitness?" },
+        { type: "long", question: "How do you overcome progress plateaus?" },
+        { type: "short", question: "Name one fiber-rich food." },
+        { type: "long", question: "What will you do differently this week?" }
       ],
       "week7-quiz": [
-        "What micronutrient do you need more of?",
-        "Describe your sleep routine.",
-        "How does stress affect your fitness?",
-        "What’s one recovery tip that helps you?"
+        { type: "short", question: "Why are vitamins and minerals important?" },
+        { type: "long", question: "Explain how stress affects recovery." },
+        { type: "short", question: "What is your average sleep duration?" },
+        { type: "long", question: "How will you improve your sleep habits?" }
       ],
       "week8-quiz": [
-        "Summarize what you’ve learned so far.",
-        "What was your favorite lesson?",
-        "Which workout made the most impact?",
-        "How will you maintain your progress?"
+        { type: "short", question: "What was your biggest win this program?" },
+        { type: "long", question: "What was the hardest part of the 8 weeks?" },
+        { type: "short", question: "Would you recommend this program?" },
+        { type: "long", question: "Any message for your trainer/team?" }
       ]
     };
 
-    const email = localStorage.getItem('userEmail');
-    if (!email) window.location.href = 'index.html';
-
     const params = new URLSearchParams(window.location.search);
-    let lesson = params.get("lesson") || "";
-    const key = lesson.toLowerCase().replace(/\s+/g, "-"); // Normalize for safety
+    const lesson = params.get("lesson") || "unknown";
+    const key = lesson
+      .toLowerCase()
+      .replace(/\s*quiz\s*/g, "-quiz")
+      .replace(/\s*week\s*(\d+)/, "week$1")
+      .replace(/\s*day\s*(\d+)/, "day$1")
+      .replace(/\s+/g, "-");
 
-    const questions = quizData[key];
-    const title = document.getElementById("quizTitle");
+    document.getElementById("quizTitle").textContent = `Quiz: ${lesson}`;
+
     const form = document.getElementById("quizForm");
-
-    title.textContent = `${lesson.replace(/-/g, " ")}`;
+    const questions = quizData[key];
 
     if (!questions || questions.length === 0) {
-      form.innerHTML = "<p><strong>Quiz not found or has no questions.</strong></p>";
+      form.innerHTML = `<p><strong>Quiz not found or has no questions.</strong></p>`;
     } else {
-      questions.forEach((question, i) => {
+      questions.forEach((q, index) => {
         const label = document.createElement("label");
-        label.textContent = question;
-        form.appendChild(label);
+        label.textContent = `${index + 1}. ${q.question}`;
 
-        const textarea = document.createElement("textarea");
-        textarea.name = `q${i}`;
-        textarea.required = true;
-        form.appendChild(textarea);
+        const input =
+          q.type === "long"
+            ? document.createElement("textarea")
+            : document.createElement("input");
+
+        input.name = `question${index}`;
+        input.required = true;
+        input.rows = 4;
+
+        form.appendChild(label);
+        form.appendChild(input);
       });
     }
 
     function submitQuiz() {
+      const formData = new FormData(form);
       const answers = {};
-      new FormData(form).forEach((value, key) => {
+      for (let [key, value] of formData.entries()) {
         answers[key] = value;
-      });
+      }
 
-      console.log("Submitted answers:", answers);
-      alert("Quiz submitted!");
-      window.location.href = "dashboard.html";
+      localStorage.setItem(`quiz_${key}_answers`, JSON.stringify(answers));
+      document.getElementById("statusMessage").textContent =
+        "✅ Your answers have been saved!";
     }
   </script>
 </body>
