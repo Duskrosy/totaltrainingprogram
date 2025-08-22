@@ -2,22 +2,30 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>View Course</title>
-  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet"/>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet" />
   <style>
+    * {
+      box-sizing: border-box;
+    }
     body {
       font-family: 'Poppins', sans-serif;
-      background: #f9f9f9;
+      background: linear-gradient(to right, #f4f7ff, #eaf0ff);
       color: #000a60;
       margin: 0;
-      padding: 2rem;
+      padding: 0;
     }
     .header {
       display: flex;
       justify-content: space-between;
       align-items: center;
-      margin-bottom: 1rem;
+      padding: 1.5rem 2rem;
+      background: white;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+      position: sticky;
+      top: 0;
+      z-index: 1000;
     }
     .header img {
       height: 48px;
@@ -26,15 +34,17 @@
       display: flex;
       flex-direction: row;
       max-width: 1200px;
-      margin: auto;
+      margin: 2rem auto;
       gap: 2rem;
+      padding: 0 2rem;
     }
     .main-content {
       flex: 3;
       background: white;
       padding: 2rem;
       border-radius: 16px;
-      box-shadow: 0 0 10px rgba(0,0,0,0.05);
+      box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+      transition: all 0.3s ease;
     }
     .sidebar {
       flex: 1;
@@ -50,9 +60,11 @@
       border-radius: 10px;
       cursor: pointer;
       font-weight: 600;
+      box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+      transition: background 0.3s ease;
     }
     .format-btn:hover {
-      background: #002288;
+      background: #010068;
     }
     .selector {
       position: fixed;
@@ -67,20 +79,32 @@
       align-items: center;
       flex-direction: column;
       z-index: 9999;
+      text-align: center;
     }
     .selector h2 {
       margin-bottom: 1rem;
+      font-weight: 600;
     }
     .selector button {
       margin: 0.5rem;
       padding: 1rem 2rem;
       font-size: 1rem;
       font-family: 'Poppins', sans-serif;
+      border: none;
+      border-radius: 8px;
+      background: #ffffff22;
+      color: white;
+      cursor: pointer;
+      transition: background 0.3s;
+    }
+    .selector button:hover {
+      background: #ffffff44;
     }
     iframe, video, audio {
       width: 100%;
       height: 500px;
       border-radius: 10px;
+      border: none;
     }
     .pdf-box {
       display: flex;
@@ -89,19 +113,27 @@
     }
     .pdf-box button {
       margin-top: 1rem;
+      padding: 0.75rem 1.5rem;
+      font-size: 1rem;
+      font-weight: 500;
+      background: #000a60;
+      color: white;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
     }
     h1 {
       font-weight: 700;
       margin-bottom: 1rem;
+      font-size: 1.8rem;
     }
     .back-btn {
       display: inline-flex;
       align-items: center;
       font-weight: 600;
-      font-size: 0.9rem;
+      font-size: 0.95rem;
       color: #000a60;
       text-decoration: none;
-      margin-bottom: 1rem;
     }
     .back-btn img {
       width: 20px;
@@ -117,7 +149,7 @@
     <button onclick="setFormat('document')">📄 Document</button>
   </div>
 
-  <div class="header container" style="align-items: center;">
+  <div class="header">
     <a href="dashboard.html" class="back-btn"><img src="images/backbutton.svg" alt="Back" />Back to Dashboard</a>
     <h1 id="lessonTitle">Lesson</h1>
     <img src="images/logo.png" alt="Logo" />
@@ -159,32 +191,19 @@
       loadFormat(currentFormat);
     }
 
-window.setFormat = function(format) {
-  localStorage.setItem(prefKey, format);
-  document.getElementById("formatSelector").style.display = "none";
-  loadFormat(format);
-};
-
-window.switchFormat = function(format) {
-  loadFormat(format);
-};
-
-window.changePreference = function() {
-  document.getElementById("formatSelector").style.display = "flex";
-};
-
-window.markDocumentComplete = function() {
-  console.log("Document download tracked.");
-};
-
-
-    function switchFormat(format) {
+    window.setFormat = function(format) {
+      localStorage.setItem(prefKey, format);
+      document.getElementById("formatSelector").style.display = "none";
       loadFormat(format);
-    }
+    };
 
-    function changePreference() {
+    window.switchFormat = function(format) {
+      loadFormat(format);
+    };
+
+    window.changePreference = function() {
       document.getElementById("formatSelector").style.display = "flex";
-    }
+    };
 
     function loadFormat(format) {
       currentFormat = format;
@@ -210,10 +229,6 @@ window.markDocumentComplete = function() {
 </div>
         `;
       }
-    }
-
-    function markDocumentComplete() {
-      console.log("Document download tracked.");
     }
   </script>
 </body>

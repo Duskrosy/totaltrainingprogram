@@ -8,137 +8,157 @@
   <style>
     body {
       font-family: 'Poppins', sans-serif;
-      background: #f9f9f9;
+      background: linear-gradient(to right, #f9f9f9, #f2f4ff);
       color: #000a60;
       margin: 0;
       padding: 2rem;
     }
     .container {
-      max-width: 800px;
+      max-width: 900px;
       margin: auto;
       background: white;
       padding: 2rem;
-      border-radius: 16px;
-      box-shadow: 0 0 10px rgba(0,0,0,0.1);
+      border-radius: 24px;
+      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.1);
+      position: relative;
     }
     h1 {
       font-weight: 700;
       margin-bottom: 1rem;
+      text-align: center;
+      font-size: 2rem;
     }
     label {
       display: block;
-      margin-top: 1rem;
+      margin-top: 1.5rem;
       font-weight: 600;
+      font-size: 1.1rem;
     }
-    textarea, input[type="text"] {
+    textarea {
       width: 100%;
       padding: 0.75rem;
       margin-top: 0.5rem;
       border: 1px solid #ccc;
-      border-radius: 8px;
+      border-radius: 10px;
       font-family: 'Poppins', sans-serif;
+      font-size: 1rem;
     }
     button {
       margin-top: 2rem;
       padding: 0.75rem 2rem;
-      background: #000a60;
+      background: linear-gradient(to right, #FE0000, #000a60);
       color: white;
       border: none;
-      border-radius: 8px;
+      border-radius: 10px;
       cursor: pointer;
       font-weight: 600;
+      font-size: 1rem;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+      transition: transform 0.2s;
+    }
+    button:hover {
+      transform: scale(1.05);
     }
     .status {
-      margin-top: 1rem;
+      margin-top: 2rem;
       font-weight: 600;
       color: green;
+      font-size: 1.1rem;
+      text-align: center;
+    }
+    .back-btn {
+      position: absolute;
+      top: 20px;
+      left: 20px;
+      background: transparent;
+      border: none;
+      cursor: pointer;
+    }
+    .back-btn img {
+      height: 32px;
+    }
+    .overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 100vh;
+      background: rgba(0, 0, 0, 0.85);
+      backdrop-filter: blur(6px);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      flex-direction: column;
+      text-align: center;
+      z-index: 9999;
+      color: white;
+      animation: fadeIn 0.5s ease-in-out;
+    }
+    .overlay h2 {
+      font-size: 3rem;
+      font-weight: 700;
+      margin-bottom: 1rem;
+    }
+    .overlay p {
+      font-size: 1.2rem;
+      font-weight: 400;
+    }
+    @keyframes fadeIn {
+      from { opacity: 0 }
+      to { opacity: 1 }
+    }
+    .confetti {
+      position: absolute;
+      top: -10px;
+      font-size: 24px;
+      animation: fall linear forwards;
+    }
+    @keyframes fall {
+      0% { transform: translateY(0); opacity: 1; }
+      100% { transform: translateY(100vh); opacity: 0; }
     }
   </style>
 </head>
 <body>
   <div class="container">
+    <button class="back-btn" onclick="window.location.href='dashboard.html'"><img src="images/backbutton.svg" alt="Back"></button>
     <h1 id="quizTitle">Quiz</h1>
     <form id="quizForm"></form>
-    <button onclick="submitQuiz()">Submit Quiz</button>
+    <button type="button" onclick="submitQuiz()">Submit Quiz</button>
     <div class="status" id="statusMessage"></div>
   </div>
 
-  <script>
-    const email = localStorage.getItem("userEmail");
-    if (!email) {
-      window.location.href = "index.html";
-    }
+  <div id="overlay" class="overlay" style="display:none">
+    <h2>🎉 Great job!</h2>
+    <p>You’ve successfully completed this quiz. Returning to dashboard in <span id="count">5</span> seconds...</p>
+  </div>
 
-    const quizData = {
-      "day1-quiz": [
-        { type: "long", question: "Why is it important to eat often throughout the day?" },
-        { type: "short", question: "When should you eat breakfast?" },
-        { type: "long", question: "How do you setup your plate for weight loss?" },
-        { type: "short", question: "What is one thing you will change starting today?" }
-      ],
-      "week1-quiz": [
-        { type: "short", question: "What is one benefit of regular exercise?" },
-        { type: "long", question: "Describe how nutrition supports your workout goals." },
-        { type: "short", question: "How many times should you train weekly?" },
-        { type: "long", question: "What is the biggest challenge you face in exercising?" }
-      ],
-      "week2-quiz": [
-        { type: "short", question: "What are carbohydrates used for?" },
-        { type: "long", question: "Explain how aerobic exercise benefits your health." },
-        { type: "short", question: "Name one complex carb you eat regularly." },
-        { type: "long", question: "How can you improve your cardio endurance?" }
-      ],
-      "week3-quiz": [
-        { type: "short", question: "What is muscle metabolism?" },
-        { type: "long", question: "Why is protein important for recovery?" },
-        { type: "short", question: "Name a high-protein food." },
-        { type: "long", question: "How will you adjust your protein intake?" }
-      ],
-      "week4-quiz": [
-        { type: "short", question: "What are healthy fats?" },
-        { type: "long", question: "Explain the principle of progressive overload." },
-        { type: "short", question: "What is one core exercise you enjoy?" },
-        { type: "long", question: "Describe your training split for this week." }
-      ],
-      "week5-quiz": [
-        { type: "short", question: "Why is hydration important?" },
-        { type: "long", question: "Explain how ab training fits into your routine." },
-        { type: "short", question: "What type of diet do you follow?" },
-        { type: "long", question: "What changes can improve your diet?" }
-      ],
-      "week6-quiz": [
-        { type: "short", question: "What is a plateau in fitness?" },
-        { type: "long", question: "How do you overcome progress plateaus?" },
-        { type: "short", question: "Name one fiber-rich food." },
-        { type: "long", question: "What will you do differently this week?" }
-      ],
-      "week7-quiz": [
-        { type: "short", question: "Why are vitamins and minerals important?" },
-        { type: "long", question: "Explain how stress affects recovery." },
-        { type: "short", question: "What is your average sleep duration?" },
-        { type: "long", question: "How will you improve your sleep habits?" }
-      ],
-      "week8-quiz": [
-        { type: "short", question: "What was your biggest win this program?" },
-        { type: "long", question: "What was the hardest part of the 8 weeks?" },
-        { type: "short", question: "Would you recommend this program?" },
-        { type: "long", question: "Any message for your trainer/team?" }
-      ]
-    };
+  <script type="module">
+    import { quizContent } from './quizContent.js';
+
+    const email = localStorage.getItem("userEmail");
+    if (!email) window.location.href = "index.html";
+
+    const quizTitleElement = document.getElementById("quizTitle");
+    const form = document.getElementById("quizForm");
+    const statusMessage = document.getElementById("statusMessage");
+    const overlay = document.getElementById("overlay");
 
     const params = new URLSearchParams(window.location.search);
-    const lesson = params.get("lesson") || "unknown";
-    const key = lesson
-      .toLowerCase()
-      .replace(/\s*quiz\s*/g, "-quiz")
-      .replace(/\s*week\s*(\d+)/, "week$1")
-      .replace(/\s*day\s*(\d+)/, "day$1")
-      .replace(/\s+/g, "-");
+    const quizSlug = params.get("quiz") || "unknown";
 
-    document.getElementById("quizTitle").textContent = `Quiz: ${lesson}`;
+    const formattedTitle =
+      "Quiz: " +
+      quizSlug
+        .replace("-quiz", "")
+        .replace("day", "Day ")
+        .replace("week", "Week ")
+        .replace(/-/g, "");
 
-    const form = document.getElementById("quizForm");
-    const questions = quizData[key];
+    quizTitleElement.textContent = formattedTitle;
+
+    const questions = quizContent[quizSlug];
+    const savedAnswers = JSON.parse(localStorage.getItem(`quiz_${quizSlug}_answers`) || "{}");
 
     if (!questions || questions.length === 0) {
       form.innerHTML = `<p><strong>Quiz not found or has no questions.</strong></p>`;
@@ -147,31 +167,53 @@
         const label = document.createElement("label");
         label.textContent = `${index + 1}. ${q.question}`;
 
-        const input =
-          q.type === "long"
-            ? document.createElement("textarea")
-            : document.createElement("input");
-
+        const input = document.createElement("textarea");
         input.name = `question${index}`;
-        input.required = true;
         input.rows = 4;
+        input.value = savedAnswers[`question${index}`] || "";
 
         form.appendChild(label);
         form.appendChild(input);
       });
     }
 
-    function submitQuiz() {
+    function launchConfetti() {
+      const emojis = ["🎉", "💪", "🏋️‍♂️", "⭐"];
+      for (let i = 0; i < 60; i++) {
+        const confetti = document.createElement("div");
+        confetti.className = "confetti";
+        confetti.style.left = Math.random() * 100 + "vw";
+        confetti.style.animationDuration = 2 + Math.random() * 2 + "s";
+        confetti.style.fontSize = 20 + Math.random() * 10 + "px";
+        confetti.textContent = emojis[Math.floor(Math.random() * emojis.length)];
+        overlay.appendChild(confetti);
+      }
+    }
+
+    window.submitQuiz = function () {
       const formData = new FormData(form);
       const answers = {};
       for (let [key, value] of formData.entries()) {
         answers[key] = value;
       }
 
-      localStorage.setItem(`quiz_${key}_answers`, JSON.stringify(answers));
-      document.getElementById("statusMessage").textContent =
-        "✅ Your answers have been saved!";
-    }
+      localStorage.setItem(`quiz_${quizSlug}_answers`, JSON.stringify(answers));
+      localStorage.setItem(`quiz_${quizSlug}_cleared`, "true");
+
+      overlay.style.display = "flex";
+      document.getElementById("count").textContent = 5;
+      launchConfetti();
+
+      let countdown = 5;
+      const interval = setInterval(() => {
+        countdown--;
+        document.getElementById("count").textContent = countdown;
+        if (countdown === 0) {
+          clearInterval(interval);
+          window.location.href = "dashboard.html";
+        }
+      }, 1000);
+    };
   </script>
 </body>
 </html>
