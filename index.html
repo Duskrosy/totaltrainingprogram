@@ -6,35 +6,123 @@
   <title>Total Fitness Login</title>
   <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
   <style>
-    :root { --primary:#010068; --accent:#FE0000; --white:#FFFFFF; }
+    :root {
+      --primary: #010068;
+      --accent: #FE0000;
+      --white: #FFFFFF;
+    }
+
     body {
-      margin:0; padding:0; font-family:'Poppins',sans-serif;
-      background:var(--primary); color:var(--white);
-      display:flex; align-items:center; justify-content:center; height:100vh;
+      margin: 0;
+      padding: 0;
+      font-family: 'Poppins', sans-serif;
+      background: var(--primary);
+      color: var(--white);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      height: 100vh;
     }
+
     .login-box {
-      background:var(--white); color:var(--primary); padding:2rem; border-radius:20px;
-      box-shadow:0 15px 30px rgba(0,0,0,0.3); width:100%; max-width:400px; text-align:center;
-      position:relative; display:flex; flex-direction:column; align-items:center;
+      background: var(--white);
+      color: var(--primary);
+      padding: 2rem;
+      border-radius: 20px;
+      box-shadow: 0 15px 30px rgba(0, 0, 0, 0.3);
+      width: 100%;
+      max-width: 400px;
+      text-align: center;
+      position: relative;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
     }
-    .logo { width:100px; margin-bottom:1rem; }
-    h1 { font-size:1.6rem; margin-bottom:1rem; font-weight:700; }
-    .loader { display:none; margin:1rem 0; }
-    .loader span { display:inline-block; width:8px; height:8px; margin:0 2px; background:var(--accent); border-radius:50%; animation:bounce .6s infinite alternate; }
-    .loader span:nth-child(2){ animation-delay:.2s; } .loader span:nth-child(3){ animation-delay:.4s; }
-    @keyframes bounce { to { transform: translateY(-8px);} }
-    input[type="email"]{
-      padding:.75rem; width:100%; font-size:1rem; border-radius:10px; border:2px solid var(--primary);
-      margin-bottom:.5rem; font-family:'Poppins',sans-serif;
+
+    .logo {
+      width: 100px;
+      margin-bottom: 1rem;
     }
-    .remember-container{ width:100%; display:flex; align-items:center; justify-content:flex-start; margin-bottom:1rem; font-size:.9rem; }
-    .remember-container input{ margin-right:8px; }
-    button{
-      background-color:var(--accent); color:var(--white); border:none; padding:.75rem 2rem; border-radius:8px;
-      font-size:1rem; font-weight:600; cursor:pointer; transition:all .3s ease;
+
+    h1 {
+      font-size: 1.6rem;
+      margin-bottom: 1rem;
+      font-weight: 700;
     }
-    button:hover{ background-color:#cc0000; }
-    #msg{ margin-top:1rem; font-weight:500; font-size:.9rem; }
+
+    .loader {
+      display: none;
+      margin: 1rem 0;
+    }
+
+    .loader span {
+      display: inline-block;
+      width: 8px;
+      height: 8px;
+      margin: 0 2px;
+      background: var(--accent);
+      border-radius: 50%;
+      animation: bounce 0.6s infinite alternate;
+    }
+
+    .loader span:nth-child(2) {
+      animation-delay: 0.2s;
+    }
+
+    .loader span:nth-child(3) {
+      animation-delay: 0.4s;
+    }
+
+    @keyframes bounce {
+      to {
+        transform: translateY(-8px);
+      }
+    }
+
+    input[type="email"] {
+      padding: 0.75rem;
+      width: 100%;
+      font-size: 1rem;
+      border-radius: 10px;
+      border: 2px solid var(--primary);
+      margin-bottom: 0.5rem;
+      font-family: 'Poppins', sans-serif;
+    }
+
+    .remember-container {
+      width: 100%;
+      display: flex;
+      align-items: center;
+      justify-content: flex-start;
+      margin-bottom: 1rem;
+      font-size: 0.9rem;
+    }
+
+    .remember-container input {
+      margin-right: 8px;
+    }
+
+    button {
+      background-color: var(--accent);
+      color: var(--white);
+      border: none;
+      padding: 0.75rem 2rem;
+      border-radius: 8px;
+      font-size: 1rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.3s ease;
+    }
+
+    button:hover {
+      background-color: #cc0000;
+    }
+
+    #msg {
+      margin-top: 1rem;
+      font-weight: 500;
+      font-size: 0.9rem;
+    }
   </style>
 </head>
 <body>
@@ -42,88 +130,88 @@
     <img src="images/logo.png" alt="Total Fitness Logo" class="logo">
     <h1>Welcome to the Total Training Program</h1>
 
-    <div class="loader" id="loader"><span></span><span></span><span></span></div>
+    <div class="loader" id="loader">
+      <span></span><span></span><span></span>
+    </div>
 
     <input type="email" id="email" placeholder="you@example.com" />
+    
     <div class="remember-container">
-      <input type="checkbox" id="rememberMe"><label for="rememberMe">Remember Me</label>
+      <input type="checkbox" id="rememberMe">
+      <label for="rememberMe">Remember Me</label>
     </div>
 
     <button onclick="checkLogin()">Continue</button>
     <div id="msg"></div>
   </div>
 
-<script type="module">
-  import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm';
+  <script type="module">
+    import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm';
 
-  // Pull values from Netlify environment variables (VITE_ prefix required)
-  const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
-  const supabaseAnonKey = import.meta.env.VITE_SUPABASE_ANON_KEY;
+    const supabase = createClient(
+      'https://zmkplthkfmonboskofuf.supabase.co',
+      'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Inpta3BsdGhrZm1vbmJvc2tvZnVmIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTM5NzMxOTQsImV4cCI6MjA2OTU0OTE5NH0.4n1Ey14s5z-GMgOeSniXefiaQ3UuvzSP5gV7WYEUnGA'
+    );
 
-  const supabase = createClient(supabaseUrl, supabaseAnonKey);
+    const emailInput = document.getElementById('email');
+    const rememberCheckbox = document.getElementById('rememberMe');
+    const msg = document.getElementById('msg');
+    const loader = document.getElementById('loader');
 
-  const emailInput = document.getElementById('email');
-  const rememberCheckbox = document.getElementById('rememberMe');
-  const msg = document.getElementById('msg');
-  const loader = document.getElementById('loader');
+    // Load saved email on page load
+    window.onload = () => {
+      const savedEmail = localStorage.getItem('rememberedEmail');
+      if (savedEmail) {
+        emailInput.value = savedEmail;
+        rememberCheckbox.checked = true;
+      }
+    };
 
-  window.onload = () => {
-    const savedEmail = localStorage.getItem('rememberedEmail');
-    if (savedEmail) {
-      emailInput.value = savedEmail;
-      rememberCheckbox.checked = true;
-    }
-  };
+    window.checkLogin = async function () {
+      const email = emailInput.value.trim();
+      msg.textContent = "";
+      msg.style.color = 'inherit';
 
-  window.checkLogin = async function () {
-    const email = emailInput.value.trim();
-    msg.textContent = "";
-    msg.style.color = 'inherit';
-
-    if (!email) {
-      msg.textContent = "Please enter a valid email.";
-      msg.style.color = 'red';
-      return;
-    }
-
-    loader.style.display = "flex";
-    msg.textContent = "";
-
-    try {
-      const { data, error } = await supabase.rpc('can_login', { p_email: email });
-
-      loader.style.display = "none";
-
-      if (error) {
-        console.error(error);
-        msg.textContent = "Something went wrong. Please try again.";
+      if (!email) {
+        msg.textContent = "Please enter a valid email.";
         msg.style.color = 'red';
         return;
       }
 
-      if (data === true) {
-        msg.textContent = "Logging you in...";
-        msg.style.color = 'green';
+      loader.style.display = "flex";
+      msg.textContent = "";
 
-        if (rememberCheckbox.checked) {
-          localStorage.setItem('rememberedEmail', email);
+      const delay = Math.floor(Math.random() * 1000) + 1000;
+
+      const { data, error } = await supabase
+        .from('user')
+        .select('*')
+        .eq('email', email)
+        .single();
+
+      setTimeout(() => {
+        loader.style.display = "none";
+        if (error || !data) {
+          msg.textContent = "Email not found. You are not enrolled yet.";
+          msg.style.color = 'red';
         } else {
-          localStorage.removeItem('rememberedEmail');
-        }
+          msg.textContent = "Logging you in...";
+          msg.style.color = 'green';
 
-        localStorage.setItem('userEmail', email);
-        setTimeout(() => { window.location.href = "dashboard.html"; }, 800);
-      } else {
-        msg.textContent = "Email not found. You are not enrolled yet.";
-        msg.style.color = 'red';
-      }
-    } catch (e) {
-      loader.style.display = "none";
-      console.error(e);
-      msg.textContent = "Network error. Please try again.";
-      msg.style.color = 'red';
-    }
-  };
-</script>
+          // Save to localStorage if checked
+          if (rememberCheckbox.checked) {
+            localStorage.setItem('rememberedEmail', email);
+          } else {
+            localStorage.removeItem('rememberedEmail');
+          }
+
+          setTimeout(() => {
+            localStorage.setItem('userEmail', email);
+            window.location.href = "dashboard.html";
+          }, 800);
+        }
+      }, delay);
+    };
+  </script>
 </body>
 </html>
