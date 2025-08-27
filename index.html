@@ -53,82 +53,77 @@
     <div id="msg"></div>
   </div>
 
-  <script type="module">
-    import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm';
+<script type="module">
+  import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm';
 
-    // --- Supabase client (same project + anon key) ---
-    const supabase = createClient(
-      'https://zmkplthkfmonboskofuf.supabase.co',
-      'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Inpta3BsdGhrZm1vbmJvc2tvZnVmIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTM5NzMxOTQsImV4cCI6MjA2OTU0OTE5NH0.4n1Ey14s5z-GMgOeSniXefiaQ3UuvzSP5gV7WYEUnGA'
-    );
+  // Pull values from Netlify environment variables (VITE_ prefix required)
+  const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
+  const supabaseAnonKey = import.meta.env.VITE_SUPABASE_ANON_KEY;
 
-    const emailInput = document.getElementById('email');
-    const rememberCheckbox = document.getElementById('rememberMe');
-    const msg = document.getElementById('msg');
-    const loader = document.getElementById('loader');
+  const supabase = createClient(supabaseUrl, supabaseAnonKey);
 
-    // Load saved email on page load
-    window.onload = () => {
-      const savedEmail = localStorage.getItem('rememberedEmail');
-      if (savedEmail) {
-        emailInput.value = savedEmail;
-        rememberCheckbox.checked = true;
-      }
-    };
+  const emailInput = document.getElementById('email');
+  const rememberCheckbox = document.getElementById('rememberMe');
+  const msg = document.getElementById('msg');
+  const loader = document.getElementById('loader');
 
-    // RPC-based login check (works with RLS on public.user)
-    window.checkLogin = async function () {
-      const email = emailInput.value.trim();
-      msg.textContent = "";
-      msg.style.color = 'inherit';
+  window.onload = () => {
+    const savedEmail = localStorage.getItem('rememberedEmail');
+    if (savedEmail) {
+      emailInput.value = savedEmail;
+      rememberCheckbox.checked = true;
+    }
+  };
 
-      if (!email) {
-        msg.textContent = "Please enter a valid email.";
+  window.checkLogin = async function () {
+    const email = emailInput.value.trim();
+    msg.textContent = "";
+    msg.style.color = 'inherit';
+
+    if (!email) {
+      msg.textContent = "Please enter a valid email.";
+      msg.style.color = 'red';
+      return;
+    }
+
+    loader.style.display = "flex";
+    msg.textContent = "";
+
+    try {
+      const { data, error } = await supabase.rpc('can_login', { p_email: email });
+
+      loader.style.display = "none";
+
+      if (error) {
+        console.error(error);
+        msg.textContent = "Something went wrong. Please try again.";
         msg.style.color = 'red';
         return;
       }
 
-      loader.style.display = "flex";
-      msg.textContent = "";
+      if (data === true) {
+        msg.textContent = "Logging you in...";
+        msg.style.color = 'green';
 
-      try {
-        // Call your RPC instead of selecting from the table
-        const { data, error } = await supabase.rpc('can_login', { p_email: email });
-
-        loader.style.display = "none";
-
-        if (error) {
-          console.error(error);
-          msg.textContent = "Something went wrong. Please try again.";
-          msg.style.color = 'red';
-          return;
-        }
-
-        if (data === true) {
-          msg.textContent = "Logging you in...";
-          msg.style.color = 'green';
-
-          if (rememberCheckbox.checked) {
-            localStorage.setItem('rememberedEmail', email);
-          } else {
-            localStorage.removeItem('rememberedEmail');
-          }
-
-          // Store for session use
-          localStorage.setItem('userEmail', email);
-
-          setTimeout(() => { window.location.href = "dashboard.html"; }, 800);
+        if (rememberCheckbox.checked) {
+          localStorage.setItem('rememberedEmail', email);
         } else {
-          msg.textContent = "Email not found. You are not enrolled yet.";
-          msg.style.color = 'red';
+          localStorage.removeItem('rememberedEmail');
         }
-      } catch (e) {
-        loader.style.display = "none";
-        console.error(e);
-        msg.textContent = "Network error. Please try again.";
+
+        localStorage.setItem('userEmail', email);
+        setTimeout(() => { window.location.href = "dashboard.html"; }, 800);
+      } else {
+        msg.textContent = "Email not found. You are not enrolled yet.";
         msg.style.color = 'red';
       }
-    };
-  </script>
+    } catch (e) {
+      loader.style.display = "none";
+      console.error(e);
+      msg.textContent = "Network error. Please try again.";
+      msg.style.color = 'red';
+    }
+  };
+</script>
 </body>
 </html>
