@@ -78,7 +78,7 @@
   <header>
     <img src="images/logo.png" alt="Total Fitness Logo"/>
     <h1>Total Training Program</h1>
-    <p class="sub">All modules are visible. Progress is saved to your device.</p>
+    <p class="sub">If you need any help, don't hesitate to ask our staff!</p>
 
     <div class="progress-wrap">
       <div class="progress-bar"><div class="progress-fill" id="progressFill"></div></div>
@@ -354,5 +354,29 @@
 
     render();
   </script>
+  
+  <script>
+(function(){
+  const el = document.getElementById('rotator');
+  if(!el) return;
+
+  const messages = [
+    "Don’t hesitate to ask our staff 👋",
+    "Follow our socials for tips & events",
+    "Say hi to Tony when you see him! 😄",
+    "Small steps today → big wins tomorrow",
+    "Hydrate, warm up, then crush it 💪",
+    "Need a form check? Just ask a coach",
+    "Consistency beats intensity—show up!",
+    "Log your progress. Celebrate the reps.",
+    "You got this. One more set!"
+  ];
+
+  // pick a random one each page load
+  const msg = messages[Math.floor(Math.random() * messages.length)];
+  el.textContent = msg;
+})();
+</script>
+
 </body>
 </html>
