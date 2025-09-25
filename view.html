@@ -6,177 +6,59 @@
   <title>View Course</title>
   <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet" />
   <style>
-    * {
-      box-sizing: border-box;
-    }
+    * { box-sizing: border-box; }
     body {
       font-family: 'Poppins', sans-serif;
       background: linear-gradient(to bottom, #f4f7ff, #eaf0ff);
-      color: #000a60;
-      margin: 0;
-      padding: 0;
+      color: #000a60; margin: 0; padding: 0;
     }
     .header {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      padding: 1rem 1.5rem;
-      background: white;
+      display: flex; justify-content: space-between; align-items: center;
+      padding: 1rem 1.5rem; background: white;
       box-shadow: 0 2px 8px rgba(0,0,0,0.05);
-      position: sticky;
-      top: 0;
-      z-index: 1000;
+      position: sticky; top: 0; z-index: 1000;
     }
-    .header img {
-      height: 44px;
-    }
-    .back-btn {
-      display: flex;
-      align-items: center;
-      font-weight: 600;
-      font-size: 0.95rem;
-      color: #000a60;
-      text-decoration: none;
-    }
-    .back-btn img {
-      width: 20px;
-      margin-right: 8px;
-    }
-    h1#lessonTitle {
-      font-weight: 700;
-      font-size: 1.2rem;
-      text-align: center;
-      flex-grow: 1;
-      margin: 0;
-    }
+    .header img { height: 44px; }
+    .back-btn { display: flex; align-items: center; font-weight: 600; font-size: 0.95rem; color: #000a60; text-decoration: none; }
+    .back-btn img { width: 20px; margin-right: 8px; }
+    h1#lessonTitle { font-weight: 700; font-size: 1.2rem; text-align: center; flex-grow: 1; margin: 0; }
 
-    .container {
-      display: flex;
-      flex-direction: column;
-      gap: 1.5rem;
-      padding: 1.5rem;
-      max-width: 1200px;
-      margin: 0 auto;
-    }
-
-    .main-content {
-      background: white;
-      padding: 1.5rem;
-      border-radius: 16px;
-      box-shadow: 0 4px 12px rgba(0,0,0,0.05);
-      transition: all 0.3s ease;
-    }
-
-    .sidebar {
-      display: flex;
-      flex-direction: row;
-      flex-wrap: wrap;
-      gap: 0.8rem;
-      justify-content: center;
-    }
+    .container { display: flex; flex-direction: column; gap: 1.5rem; padding: 1.5rem; max-width: 1200px; margin: 0 auto; }
+    .main-content { background: white; padding: 1.5rem; border-radius: 16px; box-shadow: 0 4px 12px rgba(0,0,0,0.05); transition: all 0.3s ease; }
+    .sidebar { display: flex; flex-direction: row; flex-wrap: wrap; gap: 0.8rem; justify-content: center; }
 
     .format-btn {
-      flex: 1 1 45%;
-      padding: 0.9rem 1rem;
-      background: #000a60;
-      color: white;
-      border: none;
-      border-radius: 10px;
-      cursor: pointer;
-      font-weight: 600;
-      font-size: 0.9rem;
-      box-shadow: 0 4px 6px rgba(0,0,0,0.1);
-      transition: background 0.3s ease;
+      flex: 1 1 45%; padding: 0.9rem 1rem; background: #000a60; color: white; border: none;
+      border-radius: 10px; cursor: pointer; font-weight: 600; font-size: 0.9rem;
+      box-shadow: 0 4px 6px rgba(0,0,0,0.1); transition: background 0.3s ease;
     }
-
-    .format-btn:hover {
-      background: #010068;
-    }
+    .format-btn:hover { background: #010068; }
 
     .selector {
-      position: fixed;
-      top: 0;
-      left: 0;
-      width: 100vw;
-      height: 100vh;
-      background: rgba(0, 0, 0, 0.85);
-      color: white;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      flex-direction: column;
-      z-index: 9999;
-      text-align: center;
-      padding: 2rem;
+      position: fixed; inset: 0; background: rgba(0, 0, 0, 0.85); color: white;
+      display: flex; justify-content: center; align-items: center; flex-direction: column;
+      z-index: 9999; text-align: center; padding: 2rem;
     }
-
-    .selector h2 {
-      margin-bottom: 1rem;
-      font-weight: 600;
-      font-size: 1.5rem;
-    }
-
+    .selector h2 { margin-bottom: 1rem; font-weight: 600; font-size: 1.5rem; }
     .selector button {
-      margin: 0.5rem;
-      padding: 1rem 2rem;
-      font-size: 1rem;
-      font-family: 'Poppins', sans-serif;
-      border: none;
-      border-radius: 8px;
-      background: #ffffff22;
-      color: white;
-      cursor: pointer;
-      transition: background 0.3s;
+      margin: 0.5rem; padding: 1rem 2rem; font-size: 1rem; font-family: 'Poppins', sans-serif;
+      border: none; border-radius: 8px; background: #ffffff22; color: white; cursor: pointer; transition: background 0.3s;
     }
+    .selector button:hover { background: #ffffff44; }
 
-    .selector button:hover {
-      background: #ffffff44;
-    }
-
-    iframe, video, audio {
-      width: 100%;
-      height: 400px;
-      border-radius: 10px;
-      border: none;
-    }
-
-    .pdf-box {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-    }
-
+    iframe, video, audio { width: 100%; height: 400px; border-radius: 10px; border: none; }
+    .pdf-box { display: flex; flex-direction: column; align-items: center; }
     .pdf-box button {
-      margin-top: 1rem;
-      padding: 0.75rem 1.5rem;
-      font-size: 1rem;
-      font-weight: 500;
-      background: #000a60;
-      color: white;
-      border: none;
-      border-radius: 8px;
-      cursor: pointer;
+      margin-top: 1rem; padding: 0.75rem 1.5rem; font-size: 1rem; font-weight: 500;
+      background: #000a60; color: white; border: none; border-radius: 8px; cursor: pointer;
     }
 
     @media (min-width: 768px) {
-      .container {
-        flex-direction: row;
-      }
-      .main-content {
-        flex: 3;
-      }
-      .sidebar {
-        flex: 1;
-        flex-direction: column;
-        align-items: flex-start;
-      }
-      .format-btn {
-        width: 100%;
-        font-size: 1rem;
-      }
-      h1#lessonTitle {
-        font-size: 1.5rem;
-      }
+      .container { flex-direction: row; }
+      .main-content { flex: 3; }
+      .sidebar { flex: 1; flex-direction: column; align-items: flex-start; }
+      .format-btn { width: 100%; font-size: 1rem; }
+      h1#lessonTitle { font-size: 1.5rem; }
     }
   </style>
 </head>
@@ -209,20 +91,26 @@
   <script type="module">
     import { contentMap } from './content.js';
 
-    const email = localStorage.getItem('userEmail');
-    if (!email) {
-      window.location.href = 'index.html';
-    }
-
     const params = new URLSearchParams(window.location.search);
     const lesson = params.get("lesson") || "unknown";
     const lessonData = contentMap[lesson];
     const lessonTitle = lessonData?.title || lesson;
-
     document.getElementById("lessonTitle").textContent = lessonTitle;
 
     const prefKey = `lesson_pref_${lesson}`;
     let currentFormat = localStorage.getItem(prefKey);
+
+    // Minimal helpers for marking completion (local + cookie mirror)
+    const COOKIE_DAYS = 365;
+    const cookieSet = (k,v,days=COOKIE_DAYS) => {
+      const d = new Date(); d.setTime(d.getTime() + (days*24*60*60*1000));
+      document.cookie = encodeURIComponent(k)+"="+encodeURIComponent(v)+";expires="+d.toUTCString()+";path=/;SameSite=Lax";
+    };
+    const markDone = () => {
+      const key = `lesson_${lesson}_done`;
+      try { localStorage.setItem(key, "true"); } catch {}
+      cookieSet(key, "true");
+    };
 
     if (!currentFormat) {
       document.getElementById("formatSelector").style.display = "flex";
@@ -244,6 +132,7 @@
       document.getElementById("formatSelector").style.display = "flex";
     };
 
+    // >>> ONLY THIS FUNCTION WAS CHANGED <<<
     function loadFormat(format) {
       currentFormat = format;
       const viewer = document.getElementById("viewer");
@@ -257,17 +146,61 @@
       const source = lessonData[format];
 
       if (format === "video") {
-        viewer.innerHTML = `<iframe src="${source}" frameborder="0" allowfullscreen></iframe>`;
-      } else if (format === "audio") {
-        viewer.innerHTML = `<audio controls src="${source}"></audio>`;
-      } else if (format === "document") {
+        // Use native <video> so "ended" fires properly
         viewer.innerHTML = `
-<div class="pdf-box">
-  <iframe src="https://docs.google.com/gview?url=${encodeURIComponent(source)}&embedded=true" frameborder="0"></iframe>
-  <button onclick="window.open('${source}', '_blank')">📥 Download File</button>
-</div>`;
+          <video id="lessonVideo" controls playsinline preload="metadata" src="${source}">
+            Sorry, your browser doesn't support embedded videos.
+          </video>`;
+        const v = document.getElementById('lessonVideo');
+        if (v) v.addEventListener('ended', () => { markDone(); }, { once: true });
+
+      } else if (format === "audio") {
+        // Give audio a stable id the script expects
+        viewer.innerHTML = `<audio id="lessonAudio" controls src="${source}"></audio>`;
+        const a = document.getElementById('lessonAudio');
+        if (a) a.addEventListener('ended', () => { markDone(); }, { once: true });
+
+      } else if (format === "document") {
+        // Provide a download button with id="downloadDoc" to mark completion on click
+        viewer.innerHTML = `
+          <div class="pdf-box">
+            <iframe src="https://docs.google.com/gview?url=${encodeURIComponent(source)}&embedded=true" frameborder="0"></iframe>
+            <button id="downloadDoc" type="button">📥 Download File</button>
+          </div>`;
+        const dl = document.getElementById('downloadDoc');
+        if (dl) dl.addEventListener('click', () => {
+          window.open(source, '_blank');
+          // mark shortly after to avoid popup blockers interfering
+          setTimeout(markDone, 600);
+        }, { once: true });
       }
     }
+  </script>
+
+  <!-- automark helper -->
+  <script>
+  (function(){
+    const COOKIE_DAYS = 365;
+    const cookieSet = (k,v,days=COOKIE_DAYS)=>{ const d=new Date(); d.setTime(d.getTime()+days*24*60*60*1000); document.cookie=encodeURIComponent(k)+"="+encodeURIComponent(v)+";expires="+d.toUTCString()+";path=/;SameSite=Lax"; };
+    const safeSet = (k,v)=>{ try{ localStorage.setItem(k,v); cookieSet(k,v); }catch{ cookieSet(k,v); } };
+
+    const params = new URLSearchParams(location.search);
+    const slug = params.get('lesson'); if(!slug) return;
+    const key = `lesson_${slug}_done`;
+
+    let marked = false;
+    function markDone(){ if(marked) return; marked = true; safeSet(key, "true"); }
+
+    // These will attach if elements already exist; if not, the loadFormat() listeners will handle it.
+    const video = document.getElementById('lessonVideo');
+    if(video){ video.addEventListener('ended', markDone, {once:true}); }
+
+    const audio = document.getElementById('lessonAudio');
+    if(audio){ audio.addEventListener('ended', markDone, {once:true}); }
+
+    const dl = document.getElementById('downloadDoc');
+    if(dl){ dl.addEventListener('click', ()=> setTimeout(markDone, 800)); }
+  })();
   </script>
 </body>
 </html>

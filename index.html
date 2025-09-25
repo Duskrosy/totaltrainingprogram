@@ -2,130 +2,429 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Total Fitness Login</title>
-  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Total Fitness • Welcome</title>
+
+  <!-- Fonts -->
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;800&display=swap" rel="stylesheet" />
+
+  <!-- Hint the browser to warm up dashboard early -->
+  <link rel="prefetch" href="dashboard.html" as="document" />
+  <link rel="preload" href="images/logo.png" as="image" />
+
   <style>
-    :root { --primary:#010068; --accent:#FE0000; --white:#FFFFFF; }
-    body {
-      margin:0; padding:0; font-family:'Poppins',sans-serif;
-      background:var(--primary); color:var(--white);
-      display:flex; align-items:center; justify-content:center; height:100vh;
+    :root{
+      --primary:#010068;  /* Total Fitness blue */
+      --accent:#FE0000;   /* Total Fitness red */
+      --white:#ffffff;
+      --fade: 2800ms;     /* total time before redirect */
     }
-    .login-box {
-      background:var(--white); color:var(--primary); padding:2rem; border-radius:20px;
-      box-shadow:0 15px 30px rgba(0,0,0,0.3); width:100%; max-width:400px; text-align:center;
-      position:relative; display:flex; flex-direction:column; align-items:center;
+
+    *{ box-sizing:border-box }
+    html,body{ height:100% }
+    body{
+      margin:0;
+      font-family:"Poppins", system-ui, -apple-system, Segoe UI, Roboto, "Helvetica Neue", Arial, "Noto Sans", "Apple Color Emoji","Segoe UI Emoji", "Segoe UI Symbol";
+      background:
+        radial-gradient(1200px 1200px at 80% 10%, rgba(255,255,255,0.08), transparent 60%),
+        radial-gradient(1000px 800px at 10% 90%, rgba(255,255,255,0.06), transparent 60%),
+        var(--primary);
+      color:var(--white);
+      overflow:hidden;
     }
-    .logo { width:100px; margin-bottom:1rem; }
-    h1 { font-size:1.6rem; margin-bottom:1rem; font-weight:700; }
-    .loader { display:none; margin:1rem 0; }
-    .loader span { display:inline-block; width:8px; height:8px; margin:0 2px; background:var(--accent); border-radius:50%; animation:bounce .6s infinite alternate; }
-    .loader span:nth-child(2){ animation-delay:.2s; } .loader span:nth-child(3){ animation-delay:.4s; }
-    @keyframes bounce { to { transform: translateY(-8px);} }
-    input[type="email"]{
-      padding:.75rem; width:100%; font-size:1rem; border-radius:10px; border:2px solid var(--primary);
-      margin-bottom:.5rem; font-family:'Poppins',sans-serif;
+
+    /* Center stage */
+    .wrap{
+      position:fixed; inset:0;
+      display:grid; place-items:center;
+      padding:24px;
     }
-    .remember-container{ width:100%; display:flex; align-items:center; justify-content:flex-start; margin-bottom:1rem; font-size:.9rem; }
-    .remember-container input{ margin-right:8px; }
-    button{
-      background-color:var(--accent); color:var(--white); border:none; padding:.75rem 2rem; border-radius:8px;
-      font-size:1rem; font-weight:600; cursor:pointer; transition:all .3s ease;
+
+    .card{
+      width:min(92vw, 680px);
+      border-radius:28px;
+      background:rgba(255,255,255,0.06);
+      box-shadow:0 30px 80px rgba(0,0,0,.35), inset 0 1px 0 rgba(255,255,255,.08);
+      backdrop-filter: blur(10px);
+      -webkit-backdrop-filter: blur(10px);
+      padding:32px 28px 26px;
+      text-align:center;
+      position:relative;
+      overflow:hidden;
     }
-    button:hover{ background-color:#cc0000; }
-    #msg{ margin-top:1rem; font-weight:500; font-size:.9rem; }
+
+    /* Animated gradient edge */
+    .card:before{
+      content:"";
+      position:absolute; inset:-2px;
+      border-radius:30px;
+      padding:2px;
+      background:conic-gradient(from 0deg,
+        #4c4cff, #7f7fff, #a6a6ff, #7f7fff, #4c4cff);
+      -webkit-mask:
+        linear-gradient(#000 0 0) content-box,
+        linear-gradient(#000 0 0);
+      -webkit-mask-composite: xor; mask-composite: exclude;
+      animation:spin 8s linear infinite;
+      opacity:.55;
+    }
+
+    @keyframes spin{ to{ transform:rotate(1turn) } }
+
+    .logo{
+      width:min(120px, 30vw);
+      height:auto;
+      display:block;
+      margin:0 auto 14px;
+      transform:translateY(6px) scale(.96);
+      opacity:0;
+      animation:logoIn 700ms cubic-bezier(.2,.8,.2,1) forwards;
+    }
+
+    @keyframes logoIn{
+      to{ opacity:1; transform:translateY(0) scale(1) }
+    }
+
+    .title{
+      font-weight:800; letter-spacing:.2px; line-height:1.1;
+      font-size: clamp(22px, 5vw, 36px);
+      margin:2px 0 6px;
+      opacity:0; transform:translateY(10px);
+      animation:titleIn 650ms 450ms cubic-bezier(.2,.8,.2,1) forwards;
+    }
+
+    @keyframes titleIn{
+      to{ opacity:1; transform:translateY(0) }
+    }
+
+    .subtitle{
+      font-size: clamp(14px, 3.6vw, 18px);
+      opacity:.88;
+      margin:0 0 14px;
+      letter-spacing:.3px;
+      transform:translateY(6px);
+      opacity:0;
+      animation:subIn 550ms 800ms ease-out forwards;
+    }
+
+    @keyframes subIn{
+      to{ opacity:.88; transform:translateY(0) }
+    }
+
+    /* Loader dots */
+    .loader{
+      display:inline-flex; gap:8px; align-items:flex-end;
+      margin-top:8px;
+      opacity:0; transform:translateY(6px);
+      animation:fadeIn 350ms 1050ms ease-out forwards;
+    }
+    @keyframes fadeIn{ to{ opacity:1; transform:none } }
+
+    .dot{
+      width:8px; height:8px; border-radius:50%;
+      background:var(--white);
+      box-shadow:0 0 0 2px rgba(255,255,255,.2) inset;
+      animation:bounce 700ms ease-in-out infinite alternate;
+    }
+    .dot:nth-child(2){ animation-delay:.15s }
+    .dot:nth-child(3){ animation-delay:.3s }
+
+    @keyframes bounce{ to{ transform:translateY(-8px) } }
+
+    /* Skip button */
+    .skip{
+      position:fixed; right:16px; bottom:16px;
+      background:rgba(255,255,255,.14);
+      color:#fff; border:1px solid rgba(255,255,255,.25);
+      border-radius:999px; padding:10px 14px; font-weight:600;
+      text-decoration:none; font-size:14px; letter-spacing:.2px;
+      backdrop-filter: blur(6px);
+      -webkit-backdrop-filter: blur(6px);
+      transition:transform .2s ease, background .2s ease;
+    }
+    .skip:active{ transform:scale(.98) }
+    .skip:hover{ background:rgba(255,255,255,.22) }
+
+    /* Respect reduced motion */
+    @media (prefers-reduced-motion: reduce){
+      .card:before, .logo, .title, .subtitle, .loader, .dot{
+        animation:none !important;
+      }
+      .logo, .title, .subtitle, .loader{ opacity:1; transform:none }
+    }
+
+    /* Small devices padding tweak */
+    @media (max-width:420px){
+      .card{ padding:26px 22px 22px }
+    }
   </style>
 </head>
 <body>
-  <div class="login-box">
-    <img src="images/logo.png" alt="Total Fitness Logo" class="logo">
-    <h1>Welcome to the Total Training Program</h1>
+  <main class="wrap" aria-label="Welcome screen">
+    <section class="card" role="dialog" aria-live="polite" aria-label="Loading the Total Training Program">
+      <img src="images/logo.png" alt="Total Fitness Logo" class="logo" />
 
-    <div class="loader" id="loader"><span></span><span></span><span></span></div>
+      <h1 class="title">Welcome To The<br/>Total Training Program</h1>
+      <p class="subtitle">Loading your dashboard&hellip; hang tight for a sec.</p>
 
-    <input type="email" id="email" placeholder="you@example.com" />
-    <div class="remember-container">
-      <input type="checkbox" id="rememberMe"><label for="rememberMe">Remember Me</label>
-    </div>
+      <div class="loader" aria-hidden="true">
+        <span class="dot"></span><span class="dot"></span><span class="dot"></span>
+      </div>
+    </section>
+  </main>
 
-    <button onclick="checkLogin()">Continue</button>
-    <div id="msg"></div>
-  </div>
+  <a class="skip" href="dashboard.html" aria-label="Skip splash and go to dashboard">Skip</a>
 
-<script type="module">
-  import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm';
+  <script>
+    // If user has visited recently, slightly shorten the splash
+    const LAST_VISIT_KEY = "tf_last_visit";
+    const now = Date.now();
+    const wasRecent = (() => {
+      const last = Number(localStorage.getItem(LAST_VISIT_KEY) || 0);
+      return (now - last) < 1000 * 60 * 60 * 12; // 12 hours
+    })();
 
-  // Hardcoded Supabase project URL + anon key
-  const supabaseUrl = "https://zmkplthkfmonboskofuf.supabase.co";
-  const supabaseAnonKey = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Inpta3BsdGhrZm1vbmJvc2tvZnVmIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTM5NzMxOTQsImV4cCI6MjA2OTU0OTE5NH0.4n1Ey14s5z-GMgOeSniXefiaQ3UuvzSP5gV7WYEUnGA";
+    // Base timing designed for smooth UX:
+    // 0–0.7s logo, 0.45–1.1s title, 0.8–1.35s subtitle, loader by 1.05s,
+    // redirect ~2.8s (or 2.2s if recently visited)
+    const REDIRECT_MS = window.matchMedia("(prefers-reduced-motion: reduce)").matches
+      ? 800      // fast for reduced motion users
+      : (wasRecent ? 2200 : 2800);
 
-  const supabase = createClient(supabaseUrl, supabaseAnonKey);
+    // Persist visit time for future shorter splash
+    localStorage.setItem(LAST_VISIT_KEY, String(now));
 
-  const emailInput = document.getElementById('email');
-  const rememberCheckbox = document.getElementById('rememberMe');
-  const msg = document.getElementById('msg');
-  const loader = document.getElementById('loader');
+    // Safety: if dashboard is already open in bfcache or fails to load, still navigate
+    const go = () => { window.location.replace("dashboard.html"); };
+    const t = setTimeout(go, REDIRECT_MS);
 
-  // Load saved email on page load
-  window.onload = () => {
-    const savedEmail = localStorage.getItem('rememberedEmail');
-    if (savedEmail) {
-      emailInput.value = savedEmail;
-      rememberCheckbox.checked = true;
-    }
-  };
-
-  // RPC-based login check
-  window.checkLogin = async function () {
-    const email = emailInput.value.trim();
-    msg.textContent = "";
-    msg.style.color = 'inherit';
-
-    if (!email) {
-      msg.textContent = "Please enter a valid email.";
-      msg.style.color = 'red';
-      return;
-    }
-
-    loader.style.display = "flex";
-    msg.textContent = "";
-
-    try {
-      const { data, error } = await supabase.rpc('can_login', { p_email: email });
-
-      loader.style.display = "none";
-
-      if (error) {
-        console.error(error);
-        msg.textContent = "Something went wrong. Please try again.";
-        msg.style.color = 'red';
-        return;
+    // If user starts interacting, allow skip via keyboard Enter/Space
+    window.addEventListener("keydown", (e) => {
+      if (e.key === "Enter" || e.code === "Space") {
+        clearTimeout(t); go();
       }
+    }, { once:true });
 
-      if (data === true) {
-        msg.textContent = "Logging you in...";
-        msg.style.color = 'green';
+    // If the logo image fails, don't stall
+    document.querySelector(".logo")?.addEventListener("error", () => {
+      clearTimeout(t);
+      setTimeout(go, 600);
+    });
+  </script>
+</body>
+</html>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Total Fitness • Welcome</title>
 
-        if (rememberCheckbox.checked) {
-          localStorage.setItem('rememberedEmail', email);
-        } else {
-          localStorage.removeItem('rememberedEmail');
-        }
+  <!-- Fonts -->
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;800&display=swap" rel="stylesheet" />
 
-        localStorage.setItem('userEmail', email);
-        setTimeout(() => { window.location.href = "dashboard.html"; }, 800);
-      } else {
-        msg.textContent = "Email not found. You are not enrolled yet.";
-        msg.style.color = 'red';
-      }
-    } catch (e) {
-      loader.style.display = "none";
-      console.error(e);
-      msg.textContent = "Network error. Please try again.";
-      msg.style.color = 'red';
+  <!-- Hint the browser to warm up dashboard early -->
+  <link rel="prefetch" href="dashboard.html" as="document" />
+  <link rel="preload" href="images/logo.png" as="image" />
+
+  <style>
+    :root{
+      --primary:#010068;  /* Total Fitness blue */
+      --accent:#FE0000;   /* Total Fitness red */
+      --white:#ffffff;
+      --fade: 2800ms;     /* total time before redirect */
     }
-  };
-</script>
+
+    *{ box-sizing:border-box }
+    html,body{ height:100% }
+    body{
+      margin:0;
+      font-family:"Poppins", system-ui, -apple-system, Segoe UI, Roboto, "Helvetica Neue", Arial, "Noto Sans", "Apple Color Emoji","Segoe UI Emoji", "Segoe UI Symbol";
+      background:
+        radial-gradient(1200px 1200px at 80% 10%, rgba(255,255,255,0.08), transparent 60%),
+        radial-gradient(1000px 800px at 10% 90%, rgba(255,255,255,0.06), transparent 60%),
+        var(--primary);
+      color:var(--white);
+      overflow:hidden;
+    }
+
+    /* Center stage */
+    .wrap{
+      position:fixed; inset:0;
+      display:grid; place-items:center;
+      padding:24px;
+    }
+
+    .card{
+      width:min(92vw, 680px);
+      border-radius:28px;
+      background:rgba(255,255,255,0.06);
+      box-shadow:0 30px 80px rgba(0,0,0,.35), inset 0 1px 0 rgba(255,255,255,.08);
+      backdrop-filter: blur(10px);
+      -webkit-backdrop-filter: blur(10px);
+      padding:32px 28px 26px;
+      text-align:center;
+      position:relative;
+      overflow:hidden;
+    }
+
+    /* Animated gradient edge */
+    .card:before{
+      content:"";
+      position:absolute; inset:-2px;
+      border-radius:30px;
+      padding:2px;
+      background:conic-gradient(from 0deg,
+        #4c4cff, #7f7fff, #a6a6ff, #7f7fff, #4c4cff);
+      -webkit-mask:
+        linear-gradient(#000 0 0) content-box,
+        linear-gradient(#000 0 0);
+      -webkit-mask-composite: xor; mask-composite: exclude;
+      animation:spin 8s linear infinite;
+      opacity:.55;
+    }
+
+    @keyframes spin{ to{ transform:rotate(1turn) } }
+
+    .logo{
+      width:min(120px, 30vw);
+      height:auto;
+      display:block;
+      margin:0 auto 14px;
+      transform:translateY(6px) scale(.96);
+      opacity:0;
+      animation:logoIn 700ms cubic-bezier(.2,.8,.2,1) forwards;
+    }
+
+    @keyframes logoIn{
+      to{ opacity:1; transform:translateY(0) scale(1) }
+    }
+
+    .title{
+      font-weight:800; letter-spacing:.2px; line-height:1.1;
+      font-size: clamp(22px, 5vw, 36px);
+      margin:2px 0 6px;
+      opacity:0; transform:translateY(10px);
+      animation:titleIn 650ms 450ms cubic-bezier(.2,.8,.2,1) forwards;
+    }
+
+    @keyframes titleIn{
+      to{ opacity:1; transform:translateY(0) }
+    }
+
+    .subtitle{
+      font-size: clamp(14px, 3.6vw, 18px);
+      opacity:.88;
+      margin:0 0 14px;
+      letter-spacing:.3px;
+      transform:translateY(6px);
+      opacity:0;
+      animation:subIn 550ms 800ms ease-out forwards;
+    }
+
+    @keyframes subIn{
+      to{ opacity:.88; transform:translateY(0) }
+    }
+
+    /* Loader dots */
+    .loader{
+      display:inline-flex; gap:8px; align-items:flex-end;
+      margin-top:8px;
+      opacity:0; transform:translateY(6px);
+      animation:fadeIn 350ms 1050ms ease-out forwards;
+    }
+    @keyframes fadeIn{ to{ opacity:1; transform:none } }
+
+    .dot{
+      width:8px; height:8px; border-radius:50%;
+      background:var(--white);
+      box-shadow:0 0 0 2px rgba(255,255,255,.2) inset;
+      animation:bounce 700ms ease-in-out infinite alternate;
+    }
+    .dot:nth-child(2){ animation-delay:.15s }
+    .dot:nth-child(3){ animation-delay:.3s }
+
+    @keyframes bounce{ to{ transform:translateY(-8px) } }
+
+    /* Skip button */
+    .skip{
+      position:fixed; right:16px; bottom:16px;
+      background:rgba(255,255,255,.14);
+      color:#fff; border:1px solid rgba(255,255,255,.25);
+      border-radius:999px; padding:10px 14px; font-weight:600;
+      text-decoration:none; font-size:14px; letter-spacing:.2px;
+      backdrop-filter: blur(6px);
+      -webkit-backdrop-filter: blur(6px);
+      transition:transform .2s ease, background .2s ease;
+    }
+    .skip:active{ transform:scale(.98) }
+    .skip:hover{ background:rgba(255,255,255,.22) }
+
+    /* Respect reduced motion */
+    @media (prefers-reduced-motion: reduce){
+      .card:before, .logo, .title, .subtitle, .loader, .dot{
+        animation:none !important;
+      }
+      .logo, .title, .subtitle, .loader{ opacity:1; transform:none }
+    }
+
+    /* Small devices padding tweak */
+    @media (max-width:420px){
+      .card{ padding:26px 22px 22px }
+    }
+  </style>
+</head>
+<body>
+  <main class="wrap" aria-label="Welcome screen">
+    <section class="card" role="dialog" aria-live="polite" aria-label="Loading the Total Training Program">
+      <img src="images/logo.png" alt="Total Fitness Logo" class="logo" />
+
+      <h1 class="title">Welcome To The<br/>Total Training Program</h1>
+      <p class="subtitle">Loading your dashboard&hellip; hang tight for a sec.</p>
+
+      <div class="loader" aria-hidden="true">
+        <span class="dot"></span><span class="dot"></span><span class="dot"></span>
+      </div>
+    </section>
+  </main>
+
+  <a class="skip" href="dashboard.html" aria-label="Skip splash and go to dashboard">Skip</a>
+
+  <script>
+    // If user has visited recently, slightly shorten the splash
+    const LAST_VISIT_KEY = "tf_last_visit";
+    const now = Date.now();
+    const wasRecent = (() => {
+      const last = Number(localStorage.getItem(LAST_VISIT_KEY) || 0);
+      return (now - last) < 1000 * 60 * 60 * 12; // 12 hours
+    })();
+
+    // Base timing designed for smooth UX:
+    // 0–0.7s logo, 0.45–1.1s title, 0.8–1.35s subtitle, loader by 1.05s,
+    // redirect ~2.8s (or 2.2s if recently visited)
+    const REDIRECT_MS = window.matchMedia("(prefers-reduced-motion: reduce)").matches
+      ? 800      // fast for reduced motion users
+      : (wasRecent ? 2200 : 2800);
+
+    // Persist visit time for future shorter splash
+    localStorage.setItem(LAST_VISIT_KEY, String(now));
+
+    // Safety: if dashboard is already open in bfcache or fails to load, still navigate
+    const go = () => { window.location.replace("dashboard.html"); };
+    const t = setTimeout(go, REDIRECT_MS);
+
+    // If user starts interacting, allow skip via keyboard Enter/Space
+    window.addEventListener("keydown", (e) => {
+      if (e.key === "Enter" || e.code === "Space") {
+        clearTimeout(t); go();
+      }
+    }, { once:true });
+
+    // If the logo image fails, don't stall
+    document.querySelector(".logo")?.addEventListener("error", () => {
+      clearTimeout(t);
+      setTimeout(go, 600);
+    });
+  </script>
 </body>
 </html>
